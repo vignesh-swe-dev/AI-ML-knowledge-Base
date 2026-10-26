@@ -33,7 +33,7 @@ Using the multivariate chain rule:
 
 | Optimizer | Mathematical Update Rule | Primary Strength |
 |---|---|---|
-| **SGD + Momentum** | $\mathbf{v}_t = \beta \mathbf{v}_{t-1} + \mathbf{g}_t$; $\mathbf{w}_{t+1} = \mathbf{w}_t - \eta \mathbf{v}_t$ | Escapes shallow ravines; excellent test generalization |
+| **SGD + Momentum** | $\mathbf{v}_t = \beta \mathbf{v}_{t-1} + \mathbf{g}_t$; $\mathbf{w}_{t+1} = \mathbf{w}_t - \eta \mathbf{v}_t$ | Damps oscillations across ravines; often generalizes well |
 | **RMSprop** | $\mathbf{s}_t = \alpha \mathbf{s}_{t-1} + (1-\alpha)\mathbf{g}_t^2$; $\mathbf{w}_{t+1} = \mathbf{w}_t - \frac{\eta}{\sqrt{\mathbf{s}_t}+\epsilon}\mathbf{g}_t$ | Normalizes step size across varying gradient scales |
 | **Adam** | Combines 1st moment $\mathbf{m}_t$ (momentum) & 2nd moment $\mathbf{v}_t$ (RMSprop) | Fast initial convergence; standard baseline |
 | **AdamW** | Decouples weight decay from gradient moment accumulation | State-of-the-art for Transformers & LLMs |
@@ -43,7 +43,7 @@ Using the multivariate chain rule:
 ## When to Use
 
 - Use **AdamW** with cosine decay learning rate schedule as the default choice for Transformers, LLMs, and Diffusion models.
-- Use **SGD with Nesterov Momentum** for training state-of-the-art Computer Vision networks (ResNets, ConvNeXt).
+- Use **SGD with Nesterov Momentum** for training Computer Vision networks such as ResNets.
 - Implement **Gradient Clipping** when training recurrent models or deep transformers to prevent numerical explosion.
 
 ---

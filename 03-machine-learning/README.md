@@ -28,7 +28,7 @@ from statistical derivation to vectorized implementations and Scikit-Learn produ
 
 ## ⚖️ The Bias-Variance Tradeoff
 
-The expected generalization error of any supervised model on unseen test data decomposes into three components:
+For squared-error loss, the expected generalization error of a supervised model on unseen test data decomposes into three components:
 $$\mathbb{E}[\text{Error}] = \text{Bias}^2 + \text{Variance} + \sigma^2$$
 
 - **Bias**: Error stemming from overly simplistic assumptions in the learning algorithm (underfitting).
@@ -50,13 +50,13 @@ toward zero but almost never sets them identically to zero.
 **Answer**: In Random Forests, each tree is trained on a bootstrap sample drawn with replacement from $N$ instances.
 The probability of any sample *not* being chosen for a tree is $\lim_{N \to \infty} (1 - 1/N)^N = 1/e \approx 36.8\%$.
 These unchosen samples are "Out-of-Bag" for that specific tree. Evaluating each instance using only the ensemble of trees
-where it was OOB yields an unbiased generalization estimate equivalent to leave-one-out cross-validation without
+where it was OOB yields a nearly unbiased generalization estimate, comparable to cross-validation, without
 the computational expense of running separate CV folds.
 
 ### Q3: How does the choice of distance metric impact K-Nearest Neighbors in high dimensions?
 **Answer**: Due to the **Curse of Dimensionality**, the ratio of the distance between the nearest and farthest points
 approaches 1 as dimensionality $D \to \infty$ under Euclidean distance. All points become equidistant, rendering proximity
-meaningless. Mitigations include feature selection, dimensionality reduction (PCA), or switching to Cosine distance.
+meaningless. Mitigations include feature selection, dimensionality reduction (PCA), or using learned embeddings in which distances remain meaningful.
 
 ### Q4: When should you prioritize PR-AUC (Precision-Recall) over ROC-AUC?
 **Answer**: Prioritize PR-AUC whenever evaluating models on **severely imbalanced datasets** (e.g., fraud detection with 0.1% positives).

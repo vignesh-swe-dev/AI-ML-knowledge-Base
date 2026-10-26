@@ -2,7 +2,7 @@
 
 ## Concept
 Convolutional Neural Networks (CNNs) are specialized deep learning architectures designed for processing data
-with a known, grid-like spatial topology, such as 2D digital images or 1D audio spectrograms.
+with a known, grid-like spatial topology, such as 2D digital images, 2D audio spectrograms, or 1D signals.
 
 Standard fully connected MLPs fail catastrophically on high-resolution image data for two reasons:
 1. **Parameter Explosion**: Connecting an MLP directly to a $1024 \times 1024 \times 3$ image produces over 3 million weights per neuron.
@@ -19,7 +19,8 @@ CNNs solve this by incorporating two powerful inductive biases:
 
 ### 1. The 2D Discrete Convolution Operation
 For an input image $I \in \mathbb{R}^{H \times W}$ and a kernel filter $K \in \mathbb{R}^{k_h \times k_w}$:
-$$S(i, j) = (I * K)(i, j) = \sum_{m=0}^{k_h-1} \sum_{n=0}^{k_w-1} I(i + m, j + n) K(m, n)$$
+$$S(i, j) = \sum_{m=0}^{k_h-1} \sum_{n=0}^{k_w-1} I(i + m, j + n) K(m, n)$$
+(Strictly, this is cross-correlation, which is what deep learning libraries implement under the name "convolution".)
 
 Output Spatial Dimension Formula:
 $$H_{\text{out}} = \left\lfloor \frac{H_{\text{in}} - K_h + 2P}{S} \right\rfloor + 1$$
@@ -138,7 +139,7 @@ via backpropagation, kernel orientation is completely irrelevant.
 ### 2. Global Average Pooling (GAP) Over Flattening
 Traditional networks flattened feature maps into massive linear layers (e.g. VGG had 100M+ classifier weights).
 Modern CNNs use Global Average Pooling (`AdaptiveAvgPool2d((1, 1))`), reducing spatial maps to a single vector and
-slashing parameter counts by 90%.
+dramatically reducing parameter counts (VGG-16's fully connected layers hold roughly 120M of its 138M parameters).
 
 ### 3. Receptive Field Expansion
 Stacking two $3 \times 3$ convolutions has an effective receptive field of $5 \times 5$, but requires fewer parameters

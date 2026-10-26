@@ -91,31 +91,37 @@ class PureNumPyAdam:
 if __name__ == "__main__":
     init_pos = np.array([-1.5, 2.0])  # Start far from minimum (1, 1)
     
+    n_steps = 2000
+
+    # Test Vanilla Gradient Descent
+    w_gd = init_pos.copy()
+    for step in range(n_steps):
+        w_gd = w_gd - 0.001 * rosenbrock_grad(w_gd)
+
     # Test Adam Optimizer
     w_adam = init_pos.copy()
     opt = PureNumPyAdam(lr=0.02)
-    for step in range(500):
+    for step in range(n_steps):
         grad = rosenbrock_grad(w_adam)
         w_adam = opt.step(w_adam, grad)
-        
-    final_loss = rosenbrock(w_adam)
+
     print("Target Global Minimum: [1.0, 1.0]")
-    print(f"Adam Position after 500 steps: [{w_adam[0]:.4f}, {w_adam[1]:.4f}]")
-    print(f"Final Rosenbrock Loss: {final_loss:.6f}")
+    print(f"Vanilla GD after {n_steps} steps: [{w_gd[0]:.4f}, {w_gd[1]:.4f}] | loss = {rosenbrock(w_gd):.6f}")
+    print(f"Adam after {n_steps} steps:       [{w_adam[0]:.4f}, {w_adam[1]:.4f}] | loss = {rosenbrock(w_adam):.6f}")
 ```
 
 ---
 
 ## Key Points & Pitfalls
 
-### 1. Learning Rate Selection ($O(\eta)$)
-- Too small $\eta$: Crawling convergence, prone to getting trapped in high saddle points.
+### 1. Learning Rate Selection
+- Too small $\eta$: Very slow convergence; training may appear to stall on plateaus and near saddle points.
 - Too large $\eta$: Divergence and NaN loss values due to overshoot over steep ravine walls.
 
 ### 2. Saddle Points vs Local Minima
-In high-dimensional spaces ($D > 10^6$), local minima with high error almost never exist.
+In high-dimensional spaces (millions of parameters), empirical and theoretical evidence suggests that poor local minima with high error are rare.
 The primary impediments to optimization are **saddle points** where the gradient vanishes ($\nabla f = \mathbf{0}$)
-but the Hessian has both positive and negative eigenvalues. Momentum enables escape along negative curvature directions.
+but the Hessian has both positive and negative eigenvalues. Momentum and gradient noise help the optimizer escape along negative curvature directions.
 
 ### 3. Gradient Explosion & Vanishing
 In deep networks, backpropagation chains multiple Jacobian multiplications: $\prod_{l=1}^L J_l$.

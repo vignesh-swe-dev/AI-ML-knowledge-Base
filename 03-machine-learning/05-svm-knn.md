@@ -2,11 +2,11 @@
 
 ## Concept
 Support Vector Machines (SVM) and K-Nearest Neighbors (KNN) represent two fundamentally different geometric paradigms
-in machine learning: max-margin global parametric optimization vs local instance-based memory learning.
+in machine learning: max-margin optimization (a global, convex objective) vs local instance-based memory learning.
 
 1. **Support Vector Machines (SVM)**: Formulate classification as finding the unique hyperplane that maximizes
    the geometric margin between positive and negative classes. When data is non-linearly separable, SVM leverages
-   the **Kernel Trick** to implicitly project data into an infinite-dimensional Hilbert space where a linear boundary exists.
+   the **Kernel Trick** to implicitly project data into a higher-dimensional (possibly infinite-dimensional) feature space where a linear boundary may exist.
 2. **K-Nearest Neighbors (KNN)**: A non-parametric, lazy-learning algorithm that memorizes training samples.
    At inference time, query instances are classified by computing distances to all stored points and taking the majority vote.
 
@@ -42,7 +42,7 @@ $$D_p(\mathbf{u}, \mathbf{v}) = \left( \sum_{i=1}^D |u_i - v_i|^p \right)^{1/p}$
 ## When to Use
 
 - **SVM**: Effective for medium-sized, high-dimensional datasets (e.g. bioinformatics, text classification, handwriting recognition).
-- **KNN**: Simple baseline for low-dimensional recommendation systems, spatial clustering, and imputing missing values (`KNNImputer`).
+- **KNN**: Simple baseline for low-dimensional recommendation systems, nearest-neighbor search, and imputing missing values (`KNNImputer`).
 
 ---
 
@@ -89,11 +89,11 @@ Both algorithms depend strictly on Euclidean distance calculations. An unscaled 
 completely dominates the margin or nearest-neighbor selection.
 
 ### 2. SVM Computational Complexity ($O(N^2)$ to $O(N^3)$)
-Training kernel SVM scales quadratically or cubically with sample size $N$. It does not scale to datasets with $N > 100,000$ samples.
+Training kernel SVM scales roughly between quadratic and cubic in the sample size $N$, so it becomes impractically slow beyond roughly $10^5$ samples. For large datasets, use `LinearSVC` or `SGDClassifier`.
 
 ### 3. KNN Inference Latency ($O(N \cdot D)$)
-KNN has zero training cost ($O(1)$), but computing distances against all $N$ points at inference time causes massive latency.
-Use KD-Trees, Ball Trees, or Approximate Nearest Neighbor libraries (Faiss, Annoy, HNSW) for large datasets.
+KNN has essentially no training cost (it only stores the data, or builds an index), but computing distances against all $N$ points at inference time causes massive latency.
+Use KD-Trees, Ball Trees, or Approximate Nearest Neighbor libraries (Faiss, Annoy, hnswlib) for large datasets.
 
 ---
 

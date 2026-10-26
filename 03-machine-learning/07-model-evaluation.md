@@ -33,7 +33,7 @@ Core Derived Ratios:
 ### 2. ROC-AUC vs PR-AUC
 - **ROC Curve**: Plots True Positive Rate (Recall) vs False Positive Rate ($\frac{\text{FP}}{\text{FP}+\text{TN}}$) across all thresholds.
 - **PR Curve**: Plots Precision vs Recall across all thresholds.
-**Crucial Rule**: Use PR-AUC whenever evaluating models on rare event detection (e.g., fraud, cancer, defect detection).
+**Rule of Thumb**: Prefer PR-AUC (reported alongside ROC-AUC) when evaluating models on rare event detection (e.g., fraud, cancer, defect detection).
 
 ### 3. Regression Error Metrics
 - **Mean Squared Error (MSE)**: $\frac{1}{N} \sum (y_i - \hat{y}_i)^2$ (Penalizes large outlier errors heavily).
@@ -45,15 +45,15 @@ Core Derived Ratios:
 
 ## When to Use
 
-- **Stratified K-Fold**: Mandatory for imbalanced classification tasks to ensure each fold preserves class proportions.
-- **TimeSeriesSplit**: Mandatory for temporal data; never train on future data to predict the past.
-- **GroupKFold**: Mandatory when multiple observations originate from the same patient/user to prevent cross-split identity leakage.
+- **Stratified K-Fold**: Strongly recommended for imbalanced classification tasks to ensure each fold preserves class proportions.
+- **TimeSeriesSplit**: Essential for temporal data; never train on future data to predict the past.
+- **GroupKFold**: Essential when multiple observations originate from the same patient/user to prevent cross-split identity leakage.
 
 ---
 
 ## Example
 
-Below is a pure Python implementation of comprehensive classification metrics without any external library dependencies:
+Below is a from-scratch implementation of the core classification metrics using only NumPy:
 
 ```python
 from typing import Dict
@@ -98,13 +98,13 @@ if __name__ == "__main__":
 ## Key Points & Pitfalls
 
 ### 1. Data Leakage via Global Transformations
-Calling `scaler.fit_transform(X)` on the complete dataset prior to cross-validation leaks test fold mean and variance
-into the training fold. Always fit transformers **exclusively on the training partition**.
+Calling `scaler.fit_transform(X)` on the complete dataset prior to cross-validation leaks the held-out fold's mean and variance
+into the training process. Always fit transformers **exclusively on the training partition**.
 
 ### 2. Time-Travel Leakage in Time-Series
 Standard random shuffling on time-series data destroys temporal causality. Always use forward-chaining `TimeSeriesSplit`.
 
-### 3. Evaluating on Train Set Only
+### 3. Ignoring the Train–Validation Gap
 High training accuracy combined with low validation accuracy indicates classic high variance (overfitting).
 
 ---

@@ -70,7 +70,7 @@ python -m pip install --upgrade pip setuptools wheel
 
 ### Step 2: Production Dependency Pinning (`requirements.txt`)
 ```text
-numpy>=1.26.0,<2.0.0
+numpy>=1.26.0,<3.0.0
 pandas>=2.1.0,<3.0.0
 scipy>=1.11.0,<2.0.0
 matplotlib>=3.8.0,<4.0.0
@@ -103,7 +103,7 @@ The core axiom of numerical Python is: **Never use explicit loops over numerical
 1. **Homogeneous Contiguous Memory**: Elements of a single type (`float64`) sit consecutively in RAM.
 2. **C-Level Vectorization**: Inner loops execute compiled C/Fortran routines directly on CPU registers.
 3. **SIMD Hardware Acceleration**: Modern CPUs execute Single Instruction Multiple Data instructions (AVX-512, NEON),
-   computing 4 to 8 floating-point operations in a single clock cycle.
+   processing several floating-point values (for example, 4 to 16) with a single instruction.
 
 ### Benchmark Demonstration
 ```python
@@ -129,7 +129,7 @@ print(f"NumPy Vectorized:  {t_np:.4f} seconds")
 print(f"Speedup Factor:    {t_py / t_np:.1f}x faster")
 ```
 
-Benchmark results typically demonstrate a **50x to 100x speedup** with a fraction of the RAM overhead.
+Benchmark results typically show the vectorized version running roughly **10x to 100x faster**, depending on the hardware.
 
 ---
 
@@ -174,7 +174,7 @@ Test your mastery of Module 01 fundamentals by completing these practical coding
 
 2. **Vectorized Mahalanobis Distance**:
    Given a data matrix $X \in \mathbb{R}^{N \times D}$ and covariance matrix $\Sigma \in \mathbb{R}^{D \times D}$,
-   compute the pairwise Mahalanobis distance between all points and the centroid without using any Python `for` loops.
+   compute the Mahalanobis distance from every point to the centroid without using any Python `for` loops.
 
 3. **Memory-Optimized Parquet ETL**:
    Load a multi-million row CSV dataset into Pandas, downcast `float64` columns to `float32`,
@@ -193,7 +193,7 @@ Test your mastery of Module 01 fundamentals by completing these practical coding
 **Answer**: The Global Interpreter Lock (GIL) is a mutual exclusion lock in CPython ensuring thread safety by
 allowing only one thread to execute Python bytecode at a time. However, NumPy C extensions release the GIL
 prior to entering compiled BLAS/LAPACK routines. Multi-threaded operations such as matrix multiplications (`@`)
-execute across all physical CPU cores using OpenMP or Intel MKL independent of the GIL.
+run on multiple CPU cores through multi-threaded BLAS libraries such as OpenBLAS or Intel MKL, independent of the GIL.
 
 ### Q2: How does Python's memory model handle variable assignment and parameter passing?
 **Answer**: Python uses "pass-by-object-reference" (or pass-by-assignment). Variables are pointers (references)
@@ -202,9 +202,10 @@ For mutable objects (lists, dicts, NumPy arrays), modifying the object in-place 
 the caller's data buffer unless an explicit copy was created.
 
 ### Q3: What is the difference between shallow copy and deep copy?
-**Answer**: A shallow copy (`copy.copy()` or `arr.view()`) creates a new container object but inserts references
-to the child objects found in the original. A deep copy (`copy.deepcopy()` or `arr.copy()`) recursively
-duplicates all nested objects, guaranteeing complete independence of the memory buffers.
+**Answer**: A shallow copy (`copy.copy()`) creates a new container object but inserts references
+to the child objects found in the original. A deep copy (`copy.deepcopy()`) recursively
+duplicates all nested objects. For NumPy, `arr.view()` creates a new array object that shares the same data buffer,
+while `arr.copy()` duplicates the data buffer (for numeric dtypes, this gives complete independence).
 
 ### Q4: When should you use a Python Generator instead of a List Comprehension?
 **Answer**: Use list comprehensions when you require random access, slicing, or need to iterate multiple times

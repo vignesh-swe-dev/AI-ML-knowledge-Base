@@ -5,9 +5,9 @@ The Multi-Layer Perceptron (MLP) is the quintessential deep learning architectur
 (the Perceptron) can only separate linearly separable classes, stacking layers of artificial neurons separated by
 **non-linear activation functions** enables deep neural networks to approximate arbitrarily complex non-linear functions.
 
-This capability is formalized by the **Universal Approximation Theorem** (Cybenko, 1989), which states that a feed-forward
-network with a single hidden layer containing a finite number of neurons can approximate any continuous function on compact subsets
-of $\mathbb{R}^D$ to arbitrary precision, provided the activation function is continuous and non-linear.
+This capability is formalized by the **Universal Approximation Theorem** (Cybenko, 1989; Hornik, 1991), which states that a feed-forward
+network with a single hidden layer containing a sufficiently large finite number of neurons can approximate any continuous function on compact subsets
+of $\mathbb{R}^D$ to arbitrary precision, provided the activation function is non-polynomial (Cybenko's original proof covered sigmoidal activations).
 
 ---
 
@@ -21,10 +21,10 @@ $$\mathbf{a}^l = \sigma(\mathbf{z}^l)$$
 ### 2. Comprehensive Activation Function Zoo
 - **Sigmoid**: $\frac{1}{1 + e^{-z}} \in (0, 1)$. Vanishing gradients; outputs not zero-centered.
 - **Tanh**: $\frac{e^z - e^{-z}}{e^z + e^{-z}} \in (-1, 1)$. Zero-centered; still suffers from vanishing gradients.
-- **ReLU**: $\max(0, z)$. Fast computation; solves vanishing gradients; "Dying ReLU" issue.
+- **ReLU**: $\max(0, z)$. Fast computation; mitigates vanishing gradients; suffers from the "Dying ReLU" issue.
 - **Leaky ReLU**: $\max(\alpha z, z)$ with $\alpha \approx 0.01$. Prevents dead neurons.
 - **GELU**: $z \Phi(z)$. Smooth non-linearity; standard in BERT, GPT, and modern Transformers.
-- **Swish / SiLU**: $z \sigma(z)$. Smooth, non-monotonic; standard in Llama / Mistral.
+- **Swish / SiLU**: $z \sigma(z)$. Smooth, non-monotonic; used inside the SwiGLU feed-forward blocks of Llama / Mistral.
 
 ### 3. Weight Initialization Protocols
 - **Xavier (Glorot) Initialization** (For Sigmoid and Tanh activations): $W \sim \mathcal{N}\left(0, \frac{2}{D_{\text{in}} + D_{\text{out}}}\right)$.
@@ -79,6 +79,6 @@ if __name__ == "__main__":
 ## Key Points & Pitfalls
 - Always initialize weights with He or Xavier scaling to prevent signal decay.
 - Remember to call `model.eval()` before running inference with Dropout layers.
-- Stacking linear layers without non-linearities collapses into a single linear regression.
+- Stacking linear layers without non-linearities collapses into a single linear transformation.
 
 ---

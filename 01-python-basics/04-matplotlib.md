@@ -18,7 +18,7 @@ tailored for tabular Pandas DataFrames with automatic confidence interval bootst
 Matplotlib has two distinct execution interfaces:
 1. **The Pyplot State Machine (`plt.plot`)**: Mimics MATLAB. Easy for quick interactive scripts but brittle for complex layouts.
 2. **The Object-Oriented (OO) API (`fig, ax = plt.subplots`)**: Explicitly instantiates Figure and Axes objects.
-   This is the mandatory standard for production-grade, maintainable visualization code.
+   This is the recommended standard for production-grade, maintainable visualization code.
 
 ```text
 +-----------------------------------------------------------------------+
@@ -87,15 +87,15 @@ ideal_line = np.linspace(10, 100, 100)
 axes[0, 0].plot(ideal_line, ideal_line, "r--", linewidth=2, label="Ideal Identity (y = x)")
 axes[0, 0].set_title("Actual vs. Predicted Values")
 axes[0, 0].set_xlabel("Ground Truth Target ($y$)")
-axes[0, 0].set_ylabel("Model Prediction ($\hat{y}$)")
+axes[0, 0].set_ylabel(r"Model Prediction ($\hat{y}$)")
 axes[0, 0].legend()
 
 # Subplot 2: Residuals vs Fitted (Heteroskedasticity Check)
 axes[0, 1].scatter(y_pred, residuals, alpha=0.6, edgecolors="k", s=30, color="#ff7f0e")
 axes[0, 1].axhline(0, color="black", linestyle="--", linewidth=1.5)
 axes[0, 1].set_title("Residuals vs. Fitted Values")
-axes[0, 1].set_xlabel("Fitted Values ($\hat{y}$)")
-axes[0, 1].set_ylabel("Residuals ($y - \hat{y}$)")
+axes[0, 1].set_xlabel(r"Fitted Values ($\hat{y}$)")
+axes[0, 1].set_ylabel(r"Residuals ($y - \hat{y}$)")
 
 # Subplot 3: Residual Distribution Histogram with KDE
 sns.histplot(residuals, kde=True, ax=axes[1, 0], color="#2ca02c", edgecolor="black")
@@ -125,11 +125,11 @@ print("Diagnostic report saved successfully.")
 ### 1. Memory Leaks in Interactive / Training Loops
 Calling `plt.figure()` inside an epoch training loop without calling `plt.close(fig)` accumulates figure
 objects in memory, eventually triggering memory exhaustion.
-Always invoke `plt.close(fig)` or wrap figure creation in a context manager.
+Always invoke `plt.close(fig)` after saving, or create figures with `matplotlib.figure.Figure` directly (pyplot does not track those).
 
 ### 2. High DPI and Bounding Box Truncation
 When saving figures to disk, axis labels often get clipped off at image boundaries.
-Always pass `dpi=300` and `bbox_inches='tight'` to `plt.savefig()` to ensure all labels are rendered crisply.
+Pass `bbox_inches='tight'` to `plt.savefig()` to prevent clipping, and set `dpi=300` for crisp, print-quality output.
 
 ### 3. Choosing Color Palettes Wisely
 - **Sequential Palettes** (e.g. `viridis`, `plasma`): Use for continuous metrics ranging from low to high.

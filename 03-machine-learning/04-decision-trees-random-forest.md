@@ -33,7 +33,7 @@ The variance of the average ensemble prediction $\bar{f} = \frac{1}{B} \sum_{b=1
 $$\text{Var}(\bar{f}) = \rho \sigma^2 + \frac{1 - \rho}{B} \sigma^2$$
 
 As the number of trees $B \to \infty$, the second term $\frac{1-\rho}{B}\sigma^2 \to 0$.
-However, the irreducible variance is bounded below by $\rho \sigma^2$.
+However, the ensemble variance cannot fall below $\rho \sigma^2$.
 **Random Forests actively minimize $\rho$** by forcing each tree split to consider only a random subset of features
 (typically $\sqrt{D}$ for classification and $D/3$ for regression), ensuring the trees are strongly decorrelated!
 
@@ -42,7 +42,7 @@ However, the irreducible variance is bounded below by $\rho \sigma^2$.
 ## When to Use
 
 - **Tabular Datasets with Non-Linear Interactions**: When complex feature interactions exist without requiring manual polynomial feature engineering.
-- **Heterogeneous Features**: Trees handle mixed numerical and categorical features without requiring monotonic feature normalization or scaling.
+- **Heterogeneous Features**: Trees do not require feature scaling or normalization. (In Scikit-Learn, categorical features still need to be encoded as numbers.)
 - **Feature Importance Auditing**: When stakeholders require global feature ranking via Permutation Importance or Gini drop.
 
 ---
@@ -72,7 +72,7 @@ rf = RandomForestClassifier(
     n_estimators=150,
     max_depth=6,
     max_features="sqrt",       # Decorrelates trees
-    oob_score=True,             # Unbiased cross-validation equivalent
+    oob_score=True,             # Approximate cross-validation estimate
     random_state=42,
     n_jobs=-1
 )
@@ -98,12 +98,12 @@ for idx in top_indices:
 
 ### 1. Inherent Bias of Gini Impurity Importance
 Mean Decrease in Impurity (MDI, `rf.feature_importances_`) is heavily biased toward high-cardinality features
-(e.g. numerical IDs or timestamps) because they offer more split points. Always use **Permutation Feature Importance**
-(`permutation_importance`) for unbiased feature auditing.
+(e.g. numerical IDs or timestamps) because they offer more split points. Prefer **Permutation Feature Importance**
+(`permutation_importance`, computed on held-out data) for feature auditing, keeping in mind that it can understate the importance of strongly correlated features.
 
 ### 2. Extrapolation Blind Spots
 Tree-based models **cannot extrapolate** outside the numerical minimum and maximum values seen during training.
-For time-series forecasting with continuous trend growth, linear models or neural networks must be used.
+For time-series forecasting with a continuous trend, detrend the target first or use models that can extrapolate (e.g., linear models or neural networks).
 
 ### 3. Tree Pruning Parameters
 To prevent individual trees from memorizing training noise, constrain tree capacity using:

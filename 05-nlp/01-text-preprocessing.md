@@ -33,7 +33,7 @@ BPE is a compression algorithm adapted for subword vocabulary construction (Senn
 ```text
 Corpus: {"low": 5, "lower": 2, "newest": 6, "widest": 3}
 Iter 0: Vocabulary = {l, o, w, e, r, n, s, t, i, d}
-Iter 1: Most frequent pair = ('e', 's') [appears 9 times in 'newest' and 'widest']
+Iter 1: Most frequent pair = ('e', 's') [appears 9 times in 'newest' and 'widest'; tied with ('s', 't'), and ties are broken arbitrarily]
         Merge 'e' + 's' -> 'es'
         Vocabulary += {'es'}
 Iter 2: Most frequent pair = ('es', 't') [appears 9 times]
@@ -46,9 +46,9 @@ Iter 2: Most frequent pair = ('es', 't') [appears 9 times]
 | Algorithm | Merge / Selection Criterion | Used By |
 |---|---|---|
 | **Byte-Pair Encoding (BPE)** | Maximum raw pair co-occurrence frequency | GPT-2, GPT-3, GPT-4, Llama 1/2/3 |
-| **WordPiece** | Maximizes mutual information / likelihood of unigram language model | BERT, DistilBERT, Electra |
-| **SentencePiece (Unigram)** | Starts with massive vocabulary and iteratively prunes tokens that minimize loss | T5, ALBERT, MarianMT |
-| **Byte-Level BPE** | Operates over 256 raw bytes of UTF-8 encoding; 0 OOV tokens | RoBERTa, GPT-4, Mistral |
+| **WordPiece** | Merges the pair that maximizes $\frac{\text{freq}(AB)}{\text{freq}(A) \cdot \text{freq}(B)}$ (a likelihood-based score) | BERT, DistilBERT, Electra |
+| **SentencePiece (Unigram)** | Starts with a massive vocabulary and iteratively prunes the tokens whose removal least increases the loss (SentencePiece is a library that supports both Unigram and BPE) | T5, ALBERT, MarianMT |
+| **Byte-Level BPE** | Operates over 256 raw bytes of UTF-8 encoding; 0 OOV tokens | RoBERTa, GPT-2/3/4, Llama 3 |
 
 ---
 

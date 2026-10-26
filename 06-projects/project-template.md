@@ -69,6 +69,7 @@ Document all transformations applied to raw features:
 ---
 
 ## 6. Evaluation Results & Performance Summary
+*(The numbers below are illustrative placeholder values; replace them with your own results.)*
 
 | Model Candidate | Train Accuracy | Val Accuracy | Val Precision | Val Recall | Val PR-AUC |
 |---|---|---|---|---|---|

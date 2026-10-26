@@ -30,7 +30,7 @@ Non-trivial solutions exist when $\det(A - \lambda I) = 0$.
 If $A$ has $D$ linearly independent eigenvectors, it can be factorized as:
 $$A = V \Lambda V^{-1}$$
 where $V$ is the matrix whose columns are eigenvectors, and $\Lambda = \text{diag}(\lambda_1, \dots, \lambda_D)$.
-For real symmetric matrices ($A = A^T$, such as covariance matrices), eigenvectors are strictly orthogonal ($V^{-1} = V^T$).
+For real symmetric matrices ($A = A^T$, such as covariance matrices), eigenvectors can be chosen orthonormal ($V^{-1} = V^T$).
 
 ### 3. Singular Value Decomposition (SVD)
 While eigendecomposition applies only to square matrices, SVD factorizes **any** arbitrary rectangular matrix $A \in \mathbb{R}^{M \times N}$:
@@ -147,7 +147,7 @@ if __name__ == "__main__":
 ### 1. The Zero-Centering Prerequisite
 PCA assumes that the first principal component passes through the center of mass of the data cloud.
 If you fail to subtract the sample mean $\mu$ before computing SVD or $X^T X$, the first principal component
-will simply point toward the mean vector rather than the direction of maximal variance.
+will tend to point toward the mean vector rather than the direction of maximal variance.
 
 ### 2. Feature Scale Sensitivity
 Features with large numeric variances (e.g., annual income in dollars) dominate PCA variance calculations

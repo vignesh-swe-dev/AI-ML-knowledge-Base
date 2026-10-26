@@ -11,7 +11,7 @@ algorithm selection during technical interviews, and day-to-day machine learning
 | File | Domain | Key Coverage |
 |---|---|---|
 | [numpy-pandas.md](numpy-pandas.md) | Scientific Computing & Tabular Data | Array slicing, broadcasting, vector math, DataFrame indexing, groupby, joins |
-| [sklearn.md](sklearn.md) | Scikit-Learn API & Modeling | Estimators, transformers, ColumnTransformer, pipelines, grid search, metrics |
+| [sklearn.md](sklearn.md) | Scikit-Learn API & Modeling | Estimators, transformers, ColumnTransformer, pipelines, randomized hyperparameter search, model persistence |
 | [ml-metrics.md](ml-metrics.md) | Evaluation Metrics & Diagnostics | Classification, regression, clustering, ranking formulas & decision guides |
 | [git-github.md](git-github.md) | Professional Version Control | Branching, interactive rebase, stashing, conflict resolution, Conventional Commits |
 

@@ -30,13 +30,13 @@ projects solve genuine business needs rather than becoming fragile research prot
 
 ### 3. Inductive Bias & No Free Lunch Theorem
 - **Inductive Bias**: The set of prior assumptions a learning algorithm uses to predict outputs on unseen inputs.
-- **No Free Lunch Theorem**: Across all possible data distributions, no single learning algorithm outperforms any other on unseen data.
+- **No Free Lunch Theorem**: Averaged over all possible problems, no single learning algorithm outperforms any other on unseen data. In practice, an algorithm's assumptions must match the structure of the problem at hand.
 
 ---
 
 ## When to Use
 
-- Use **Supervised Learning** when high-quality ground-truth labels exist and the goal is prediction or causal inference.
+- Use **Supervised Learning** when high-quality ground-truth labels exist and the goal is prediction.
 - Use **Unsupervised Learning** when labels are absent or when discovering hidden customer groupings, anomalies, or topics.
 - Use **Self-Supervised Pretraining** when massive unlabeled corpora exist to learn general representations before fine-tuning.
 

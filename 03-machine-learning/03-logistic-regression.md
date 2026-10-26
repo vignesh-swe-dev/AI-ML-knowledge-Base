@@ -65,8 +65,8 @@ class PureNumPyLogisticRegression:
         
     @staticmethod
     def _sigmoid(z: np.ndarray) -> np.ndarray:
-        # Numerically stable sigmoid to avoid overflow
-        return np.where(z >= 0, 1.0 / (1.0 + np.exp(-z)), np.exp(z) / (1.0 + np.exp(z)))
+        # Clip logits to avoid overflow in exp()
+        return 1.0 / (1.0 + np.exp(-np.clip(z, -500, 500)))
         
     def fit(self, X: np.ndarray, y: np.ndarray) -> "PureNumPyLogisticRegression":
         N, D = X.shape
@@ -119,7 +119,7 @@ if __name__ == "__main__":
 
 ### 1. Perfectly Separable Data & Infinite Weights
 If the training data is linearly separable, the Maximum Likelihood weights will diverge to infinity ($\pm \infty$)
-in an attempt to make $\sigma(z) \to 1.0$ and $\sigma(z) \to 0.0$. Regularization ($\lambda > 0$) is mandatory to stabilize weights.
+in an attempt to make $\sigma(z) \to 1.0$ and $\sigma(z) \to 0.0$. Regularization ($\lambda > 0$) is strongly recommended to stabilize the weights.
 
 ### 2. Probability Calibration vs Classification Accuracy
 A model can have 90% accuracy but horrific probability calibration (e.g. predicting 0.99 for instances that only occur 60% of the time).
@@ -127,6 +127,6 @@ Use Brier Score and Reliability Curves (`sklearn.calibration.CalibrationDisplay`
 
 ### 3. Decision Threshold Tuning
 The default 0.5 classification threshold is arbitrary. If False Negatives are ten times costlier than False Positives,
-lower the decision threshold (e.g. to 0.15) to boost recall.
+lower the decision threshold to boost recall. For well-calibrated probabilities, the cost-optimal threshold is $\frac{C_{FP}}{C_{FP} + C_{FN}} = \frac{1}{11} \approx 0.09$.
 
 ---

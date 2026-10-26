@@ -8,7 +8,7 @@ The linear model expresses the target prediction $\hat{y}$ as an affine combinat
 $$\hat{y} = w_0 + w_1 x_1 + w_2 x_2 + \dots + w_D x_D = \mathbf{w}^T \mathbf{x}$$
 
 Despite its structural simplicity, linear regression remains immensely valuable in machine learning due to its mathematical
-tractability, explicit interpretability (each weight represents the expected change in target per unit change in feature),
+tractability, explicit interpretability (each weight represents the expected change in the target per unit change in that feature, holding the other features constant),
 and existence of a closed-form global optimum via Ordinary Least Squares (OLS). When augmented with $L_1$ and $L_2$
 regularization (Ridge, Lasso, ElasticNet), linear regression remains competitive on high-dimensional tabular datasets.
 
@@ -23,7 +23,7 @@ $$\nabla_\mathbf{w} \text{Loss}(\mathbf{w}) = \frac{1}{N} X^T (X \mathbf{w} - \m
 $$X^T X \mathbf{w} = X^T \mathbf{y} \implies \mathbf{w}^* = (X^T X)^{-1} X^T \mathbf{y}$$
 
 ### 2. Regularized Loss Formulations
-- **Ridge ($L_2$)**: $\frac{1}{2N} \|X\mathbf{w} - \mathbf{y}\|^2 + \lambda \|\mathbf{w}\|_2^2 \implies \mathbf{w}^* = (X^T X + \lambda I)^{-1} X^T \mathbf{y}$.
+- **Ridge ($L_2$)**: $\|X\mathbf{w} - \mathbf{y}\|^2 + \lambda \|\mathbf{w}\|_2^2 \implies \mathbf{w}^* = (X^T X + \lambda I)^{-1} X^T \mathbf{y}$.
 - **Lasso ($L_1$)**: $\frac{1}{2N} \|X\mathbf{w} - \mathbf{y}\|^2 + \alpha \|\mathbf{w}\|_1$. Enforces sparsity and feature selection.
 - **ElasticNet**: Combines $L_1$ and $L_2$ penalties for handling groups of correlated features.
 
@@ -32,7 +32,7 @@ $$X^T X \mathbf{w} = X^T \mathbf{y} \implies \mathbf{w}^* = (X^T X)^{-1} X^T \ma
 ## When to Use
 
 - **Econometric & Financial Modeling**: When exact interpretability and statistical significance are required.
-- **High-Dimensional Datasets ($D \gg N$)**: Ridge and Lasso prevent severe overfitting.
+- **High-Dimensional Datasets ($D \gg N$)**: Ridge and Lasso help reduce severe overfitting.
 
 ---
 

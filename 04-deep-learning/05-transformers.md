@@ -7,7 +7,7 @@ for Large Language Models (LLMs), Vision Transformers (ViT), AlphaFold, and mult
 
 The core insight of the Transformer is eliminating sequential recurrent connections entirely in favor of
 **Multi-Head Self-Attention**. Self-attention allows every token in a sequence to attend to and aggregate information
-from every other token in a single constant-time ($O(1)$ path length) parallel operation, resolving the bottleneck of RNNs.
+from every other token in a single parallel operation with an $O(1)$ maximum path length between any two positions, resolving the sequential bottleneck of RNNs.
 
 ---
 
@@ -31,11 +31,20 @@ $$\text{MultiHead}(Q, K, V) = \text{Concat}(\text{head}_1, \dots, \text{head}_h)
 $$\text{where} \quad \text{head}_i = \text{Attention}(Q W_i^Q, K W_i^K, V W_i^V)$$
 
 ### 3. Pre-LN Transformer Block Architecture
-Modern LLMs (Llama, Mistral, GPT-NeoX) utilize the **Pre-LayerNorm** formulation for superior training stability:
+Modern LLMs (GPT-2 onward, Llama, Mistral, GPT-NeoX) utilize the **Pre-LayerNorm** formulation for superior training stability:
 $$\mathbf{x}^{(1)} = \mathbf{x} + \text{MultiHead}(\text{LN}(\mathbf{x}))$$
 $$\mathbf{x}^{(2)} = \mathbf{x}^{(1)} + \text{FFN}(\text{LN}(\mathbf{x}^{(1)}))$$
 
 Where $\text{FFN}(\mathbf{z}) = \text{GELU}(\mathbf{z} W_1 + \mathbf{b}_1) W_2 + \mathbf{b}_2$.
+(Llama and Mistral replace LayerNorm with RMSNorm and the GELU feed-forward block with a SwiGLU block.)
+
+### 4. Rotary Position Embeddings (RoPE)
+Self-attention itself is permutation-invariant, so position information must be injected. RoPE (Su et al., 2021) encodes position
+by rotating each consecutive pair of dimensions of the query and key vectors by an angle proportional to the token position $m$:
+$$R(m\theta_i) = \begin{pmatrix} \cos m\theta_i & -\sin m\theta_i \\ \sin m\theta_i & \cos m\theta_i \end{pmatrix}, \quad \theta_i = 10000^{-2i/d_k}$$
+Because rotations compose, the attention score between positions $m$ and $n$ depends only on their relative offset:
+$$(R_m \mathbf{q})^T (R_n \mathbf{k}) = \mathbf{q}^T R_{n-m} \mathbf{k}$$
+RoPE is applied to queries and keys only (not values) and is used in Llama, Mistral, and GPT-NeoX.
 
 ---
 
@@ -107,7 +116,7 @@ if __name__ == "__main__":
 ## Key Points & Pitfalls
 
 ### 1. The Scaling Factor $\frac{1}{\sqrt{d_k}}$
-Without scaling by $\sqrt{d_k}$, the variance of $q \cdot k$ equals $d_k$. For large dimensions ($d_k = 128$), dot products
+Without scaling by $\sqrt{d_k}$, the variance of $q \cdot k$ equals $d_k$ (assuming components with zero mean and unit variance). For large dimensions ($d_k = 128$), dot products
 explode to large values, pushing the Softmax function into saturated regions with near-zero gradients.
 
 ### 2. Causal Masking in Generative Models
@@ -115,7 +124,7 @@ In autoregressive generation, token $t$ must never attend to future tokens $t+1,
 Apply an upper-triangular mask with $-\infty$ above the diagonal prior to softmax.
 
 ### 3. Quadratic Complexity Mitigation
-Standard self-attention is $O(N^2)$ in time and memory. Use **FlashAttention-2** (kernel fusion in SRAM) to train
-on sequences beyond $32k$ tokens without OOM errors.
+Standard self-attention is $O(N^2)$ in time and memory. **FlashAttention** (a fused, tiled GPU kernel that works in on-chip SRAM) computes exact attention
+with memory that grows linearly in $N$ (compute remains $O(N^2)$), making long sequences such as $32k$ tokens practical without out-of-memory errors.
 
 ---

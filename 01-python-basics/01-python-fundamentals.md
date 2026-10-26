@@ -20,7 +20,7 @@ Every variable in Python is a reference (pointer) to an object allocated on the 
 CPython manages memory via reference counting supplemented by a cyclic garbage collector.
 
 ```text
-Variable Name (Namespace Stack)         Heap Memory Object
+Variable Name (Namespace)         Heap Memory Object
 +-----------------------------+         +-------------------------------+
 |              a              | ------> | ob_refcnt = 2                 |
 +-----------------------------+         | ob_type   = PyList_Type       |
@@ -101,6 +101,7 @@ class MLDataset:
         self._target_key = target_key
         self._mean: Optional[float] = None
         self._std: Optional[float] = None
+        self._feature_key: Optional[str] = None
     
     def __len__(self) -> int:
         return len(self._data)
@@ -114,6 +115,7 @@ class MLDataset:
         values = [sample[feature_key] for sample in self._data if feature_key in sample]
         if not values:
             raise ValueError(f"Feature {feature_key} not present in dataset.")
+        self._feature_key = feature_key
         self._mean = sum(values) / len(values)
         variance = sum((x - self._mean) ** 2 for x in values) / len(values)
         self._std = math.sqrt(variance) if variance > 0 else 1.0
@@ -123,12 +125,12 @@ class MLDataset:
         self, batch_size: int
     ) -> Generator[Tuple[List[float], List[Any]], None, None]:
         """Yields mini-batches of normalized features and targets lazily."""
-        if self._mean is None or self._std is None:
+        if self._mean is None or self._std is None or self._feature_key is None:
             raise RuntimeError("Normalizer must be fitted before batch streaming.")
             
         for i in range(0, len(self._data), batch_size):
             batch_samples = self._data[i : i + batch_size]
-            batch_x = [(s["feature"] - self._mean) / self._std for s in batch_samples]
+            batch_x = [(s[self._feature_key] - self._mean) / self._std for s in batch_samples]
             batch_y = [s[self._target_key] for s in batch_samples]
             yield batch_x, batch_y
 
@@ -156,7 +158,7 @@ def append_embedding(embedding: list, history: list = []):
     history.append(embedding)
     return history
 
-# GOOD: Use None as default sentinel
+# GOOD: Use None as default sentinel (requires: from typing import Optional)
 def append_embedding(embedding: list, history: Optional[list] = None):
     if history is None:
         history = []

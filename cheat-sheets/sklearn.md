@@ -77,7 +77,7 @@ search = RandomizedSearchCV(
     n_jobs=-1
 )
 
-# Fits strictly within training folds, completely preventing data leakage
+# Preprocessing is re-fit inside each training fold, preventing leakage across folds
 search.fit(X_train, y_train)
 print(f"Best CV ROC-AUC: {search.best_score_:.4f}")
 best_model = search.best_estimator_

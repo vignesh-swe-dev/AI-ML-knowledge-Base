@@ -7,7 +7,7 @@ together with an extensive collection of compiled routines for fast mathematical
 
 At its core, NumPy solves Python's scalar processing bottleneck by operating directly on contiguous memory blocks
 in C and Fortran. Understanding how `ndarray` strides, memory layouts, and broadcasting rules work
-allows machine learning practitioners to write ultra-fast, vectorized algorithms that match the performance
+allows machine learning practitioners to write ultra-fast, vectorized algorithms that approach the performance
 of native C code without losing Python's syntactic elegance.
 
 ---
@@ -37,7 +37,7 @@ copying the data buffer, basic slices execute in $O(1)$ constant time regardless
 
 ### 2. Broadcasting Semantics
 Broadcasting describes how NumPy treats arrays with different shapes during arithmetic operations.
-Two dimensions are **compatible** when:
+Shapes are compared starting from the trailing (rightmost) dimension. Two dimensions are **compatible** when:
 1. They are equal, OR
 2. One of them is 1.
 
@@ -150,13 +150,13 @@ if __name__ == "__main__":
 
 ### 2. The `axis` Argument Demystified
 The `axis` parameter specifies the dimension along which an operation collapses or operates:
-- `axis=0`: Collapses down rows (operates across columns), yielding one summary stat per column.
-- `axis=1`: Collapses across columns (operates across rows), yielding one summary stat per row.
+- `axis=0`: Collapses the row axis (operates down each column), yielding one summary stat per column.
+- `axis=1`: Collapses the column axis (operates across each row), yielding one summary stat per row.
 - Remember: *Axis is the index of the dimension that disappears*.
 
 ### 3. Floating Point Precision & Numerical Stability
-- Default floating-point dtype is `float64` (double precision). For deep learning, `float32` (single) or `float16`/`bfloat16`
-  cuts memory usage in half and matches GPU tensor core hardware capabilities.
+- Default floating-point dtype is `float64` (double precision). For deep learning, `float32` (single precision) halves memory usage compared to `float64`, and `float16`/`bfloat16`
+  halve it again while matching GPU tensor core hardware capabilities.
 - When computing log probabilities or softmax, subtract the maximum value first to prevent exponential overflow:
   $$\text{Softmax}(\mathbf{z}) = \frac{\exp(\mathbf{z} - \max(\mathbf{z}))}{\sum \exp(\mathbf{z} - \max(\mathbf{z}))}$$
 

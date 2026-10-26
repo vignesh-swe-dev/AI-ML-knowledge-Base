@@ -40,7 +40,7 @@ $$\mu_g = \frac{1}{|S_g|} \sum_{i \in S_g} x_i, \quad \forall g \in \text{Groups
 By default, Pandas imports text columns as `object` (arrays of pointers to Python strings) and numeric columns as `int64` or `float64`.
 This creates massive RAM overhead. For a column with repeated string labels:
 - `object` dtype: Stores an 8-byte pointer per row + individual `PyUnicode` heap allocations.
-- `category` dtype: Stores an integer code lookup table (e.g. `int8` for $\le 256$ categories), reducing memory by **80% to 95%**.
+- `category` dtype: Stores an integer code lookup table (e.g. `int8` for up to 127 categories), which often reduces memory by well over **80%** for low-cardinality columns.
 
 ---
 
@@ -62,6 +62,7 @@ import pandas as pd
 import numpy as np
 
 # 1. Create representative raw DataFrame
+np.random.seed(42)
 data = {
     "customer_id": [f"CUST_{i:04d}" for i in range(1000)],
     "contract_type": np.random.choice(["Month-to-Month", "One-Year", "Two-Year"], size=1000),
@@ -142,7 +143,7 @@ df.loc[mask, 'col'] = value
 
 ### 2. Avoid Iterating with `iterrows()`
 `df.iterrows()` converts each row into a Pandas Series at every iteration, destroying type consistency and running
-hundreds of times slower than vectorized expressions or `itertuples()`. Never use it for large tables.
+far slower (often by orders of magnitude) than vectorized expressions and noticeably slower than `itertuples()`. Avoid it for large tables.
 
 ### 3. Merging vs Concatenation
 - `pd.merge()`: Performs SQL-style joins (`inner`, `left`, `right`, `outer`) on common keys or indexes.

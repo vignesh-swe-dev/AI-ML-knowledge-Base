@@ -54,7 +54,7 @@ B = rng.normal(size=(4, 4))
 # Linear Algebra
 C = A @ B                        # Matrix multiplication (np.matmul)
 dot_prod = np.dot(A[0], B[0])    # 1D inner product
-A_inv = np.linalg.inv(A)         # Matrix inverse (use np.linalg.solve instead)
+A_inv = np.linalg.inv(A)         # Matrix inverse (prefer np.linalg.solve when solving A x = b)
 eigenvals, eigenvecs = np.linalg.eig(A)
 U, S, Vt = np.linalg.svd(A)
 

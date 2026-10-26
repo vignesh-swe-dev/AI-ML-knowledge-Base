@@ -2,7 +2,7 @@
 
 ## Concept
 Feature engineering is the process of transforming raw domain data into structured, predictive numerical representations
-that machine learning algorithms can effectively exploit. As Turing Award laureate Andrew Ng famously stated:
+that machine learning algorithms can effectively exploit. As Andrew Ng has put it:
 *"Coming up with features is difficult, time-consuming, requires expert knowledge. 'Applied machine learning' is basically feature engineering."*
 
 Raw real-world datasets arrive with missing observations, high-cardinality categorical variables, skewed distributions,
@@ -16,10 +16,10 @@ improves linear separability, and prevents catastrophic data leakage.
 ### 1. Numerical Feature Transformations
 - **Standardization ($Z$-Score Scaling)**: Centers data to zero mean and unit variance:
   $$z = \frac{x - \mu}{\sigma}$$
-  Mandatory for gradient descent, SVM, KNN, and Ridge/Lasso regularization.
+  Important for gradient descent, SVM, KNN, and Ridge/Lasso regularization.
 - **Min-Max Normalization**: Bounds features into the fixed range $[0, 1]$:
   $$x_{\text{norm}} = \frac{x - x_{\min}}{x_{\max} - x_{\min}}$$
-- **Power / Box-Cox Transformation**: Stabilizes variance and maps skewed distributions to approximate Gaussians:
+- **Power / Box-Cox Transformation**: Stabilizes variance and maps skewed distributions to approximate Gaussians (Box-Cox requires strictly positive $y$; use Yeo-Johnson for zero or negative values):
   $$y^{(\lambda)} = \begin{cases} \frac{y^\lambda - 1}{\lambda} & \text{if } \lambda \ne 0 \\ \ln(y) & \text{if } \lambda = 0 \end{cases}$$
 
 ### 2. Categorical Encoding Strategies
@@ -101,9 +101,7 @@ In production, test samples often contain new categories unseen during training.
 Always configure `OneHotEncoder(handle_unknown='ignore')` to output all zeros for unseen categories rather than throwing an exception.
 
 ### 3. Log Transforms on Zero or Negative Values
-Applying $\log(x)$ to features containing zero throws an error or outputs $-\infty$.
+Applying $\log(x)$ to features containing zero outputs $-\infty$ (and negative values produce `NaN`).
 Use $\log(1 + x)$ via `np.log1p()` or Yeo-Johnson transformation to safely handle zero values.
 
 ---
-
-ncy, and verify reproducibility with fixed random seeds.

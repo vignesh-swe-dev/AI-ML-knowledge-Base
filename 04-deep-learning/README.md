@@ -37,8 +37,8 @@ and the foundational Transformer self-attention architecture that powers contemp
 
 ## 💡 Top Technical Interview Questions (Deep Learning)
 ### Q1: What is the Vanishing Gradient problem and how do modern architectures solve it?
-**Answer**: In deep networks, the chain rule multiplies derivatives across layers. Saturating activations (Sigmoid, Tanh)
-have derivatives $\le 0.25$, causing gradients to vanish exponentially. Solved by ReLU/GELU, Residual Skip Connections, and Layer/Batch Normalization.
+**Answer**: In deep networks, the chain rule multiplies derivatives across layers. Saturating activations (Sigmoid, Tanh) have small derivatives
+in their saturated regions (the Sigmoid derivative never exceeds $0.25$), causing gradients to vanish exponentially with depth. Solved by ReLU/GELU, Residual Skip Connections, and Layer/Batch Normalization.
 
 ### Q2: Why is AdamW preferred over standard Adam with L2 regularization?
 **Answer**: In Adam, $L_2$ regularization is divided by historical gradient scale $\sqrt{\mathbf{v}_t}$, distorting regularization.

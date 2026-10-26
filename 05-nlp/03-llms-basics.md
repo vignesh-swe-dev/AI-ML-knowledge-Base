@@ -120,17 +120,18 @@ if __name__ == "__main__":
 ## Key Points & Pitfalls
 
 ### 1. KV-Cache Memory Consumption
-KV-Cache size scales linearly with context length $L$, batch size $B$, layers $N_{\text{layers}}$, and heads $N_{\text{heads}}$:
-$$\text{Memory (bytes)} = 2 \times 2 \times B \times L \times N_{\text{layers}} \times d_{\text{model}}$$
-For long context windows ($128k$ tokens), the KV-cache easily exceeds model parameter memory. Use Grouped-Query Attention (GQA)
-to reduce KV-cache footprints by $8\times$.
+KV-Cache size scales linearly with context length $L$, batch size $B$, and the number of layers $N_{\text{layers}}$:
+$$\text{Memory (bytes)} = 2 \times 2 \times B \times L \times N_{\text{layers}} \times d_{\text{kv}}$$
+Here the first factor of 2 is for keys and values, the second is bytes per FP16 value, and $d_{\text{kv}} = N_{\text{kv\_heads}} \times d_{\text{head}}$ (equal to $d_{\text{model}}$ for standard multi-head attention).
+For long context windows ($128k$ tokens), the KV-cache can rival or exceed model parameter memory. Grouped-Query Attention (GQA)
+shrinks the KV-cache by the ratio of query heads to KV heads (e.g., $4\times$ for Llama 3 8B and $8\times$ for Llama 3 70B).
 
 ### 2. Repetition & Degeneration
 Greedy search frequently traps models in degenerate repetitive loops ("the the the").
 Apply frequency penalties or use Nucleus sampling ($P=0.9$) to preserve linguistic diversity.
 
 ### 3. Quantization Degradation (FP16 $\to$ INT4)
-4-bit quantization (bitsandbytes, AWQ, GPTQ) reduces VRAM by 75% with negligible perplexity loss, but can degrade code generation
+4-bit quantization (bitsandbytes, AWQ, GPTQ) reduces weight memory by roughly 75% with typically small perplexity loss, but can degrade code generation
 and complex mathematical reasoning if outlier feature channels are clipped.
 
 ---

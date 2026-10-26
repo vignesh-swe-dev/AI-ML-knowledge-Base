@@ -25,7 +25,7 @@
 - **ROC-AUC (Area Under Receiver Operating Characteristic)**:
   Integrates TPR vs FPR across all thresholds. Probability that a random positive sample ranks higher than a random negative sample.
 - **PR-AUC (Area Under Precision-Recall Curve)**:
-  Integrates Precision vs Recall. Mandatory metric when positive class is rare ($< 5\%$).
+  Integrates Precision vs Recall. Preferred metric (reported alongside ROC-AUC) when the positive class is rare (e.g., $< 5\%$).
 
 ---
 
@@ -43,3 +43,10 @@
 - **Recall@K**: Fraction of all relevant documents captured in top-$K$ results.
 - **Mean Reciprocal Rank (MRR)**: $\frac{1}{|Q|} \sum_{q=1}^{|Q|} \frac{1}{\text{rank}_q}$ (Measures where the *first* relevant result appears).
 - **NDCG@K (Normalized Discounted Cumulative Gain)**: Accounts for graded relevance with logarithmic rank discount.
+
+---
+
+## 5. Clustering Metrics
+- **Silhouette Coefficient**: $s(i) = \frac{b(i) - a(i)}{\max(a(i), b(i))} \in [-1, 1]$; higher is better (no ground-truth labels required).
+- **Davies-Bouldin Index**: Average similarity between each cluster and its most similar cluster; lower is better (no ground-truth labels required).
+- **Adjusted Rand Index (ARI)**: Agreement between predicted clusters and ground-truth labels, corrected for chance; $1$ is a perfect match and values near $0$ indicate random labeling.

@@ -56,7 +56,7 @@ Throughout this module and subsequent sections, standard linear algebra and calc
 | $\nabla f(\mathbf{x})$ | Gradient vector of scalar function $f$ | Column vector of partial derivatives |
 | $H_f(\mathbf{x})$ | Hessian matrix of second-order partials | Symmetric matrix $\mathbb{R}^{D \times D}$ |
 | $\mathbb{E}_{x \sim P}[f(x)]$ | Expected value of $f(x)$ under distribution $P$ | $\int f(x) p(x) dx$ or $\sum f(x) P(x)$ |
-| $D_{KL}(P \parallel Q)$ | Kullback-Leibler divergence from $Q$ to $P$ | Relative entropy measurement |
+| $D_{KL}(P \parallel Q)$ | Kullback-Leibler divergence between $P$ and $Q$ (asymmetric) | Relative entropy measurement |
 
 ---
 
@@ -85,8 +85,8 @@ time, which is computationally intractable. Deep learning relies instead on firs
 ### Q4: What does it mean for a loss function to be convex, and why is convexity desirable?
 **Answer**: A function $f$ is convex if for all $\mathbf{x}, \mathbf{y}$ and $\alpha \in [0, 1]$:
 $$f(\alpha \mathbf{x} + (1-\alpha)\mathbf{y}) \le \alpha f(\mathbf{x}) + (1-\alpha)f(\mathbf{y})$$
-Convexity guarantees that every local minimum is also a global minimum. Furthermore, gradient descent with appropriate
-step sizes is guaranteed to converge to this unique global optimum.
+Convexity guarantees that every local minimum is also a global minimum. Furthermore, for smooth convex functions, gradient descent with appropriate
+step sizes converges to a global minimum (which is unique if the function is strictly convex).
 
 ### Q5: What is the difference between covariance and correlation?
 **Answer**: Covariance $\text{Cov}(X, Y) = \mathbb{E}[(X - \mu_X)(Y - \mu_Y)]$ measures the directional linear association

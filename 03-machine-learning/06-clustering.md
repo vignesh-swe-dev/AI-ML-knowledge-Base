@@ -38,14 +38,14 @@ $$s(i) = \frac{b(i) - a(i)}{\max(a(i), b(i))} \in [-1, +1]$$
 
 - $s(i) \approx +1$: Sample is well-matched to its cluster and far from neighbors.
 - $s(i) \approx 0$: Sample is on the decision boundary between two clusters.
-- $s(i) < 0$: Sample is assigned to the wrong cluster.
+- $s(i) < 0$: Sample is likely assigned to the wrong cluster.
 
 ---
 
 ## When to Use
 
 - **K-Means**: Best when clusters are roughly spherical, convex, and of similar size and density.
-- **DBSCAN**: Best when clusters have arbitrary geometric shapes (crescents, rings), varying densities, or contain significant background noise.
+- **DBSCAN**: Best when clusters have arbitrary geometric shapes (crescents, rings) and similar densities, or contain significant background noise. A single $\epsilon$ struggles when densities vary widely; consider HDBSCAN or OPTICS in that case.
 - **Hierarchical**: Best when domain hierarchy is expected (e.g. taxonomy of animal species or organizational structures).
 
 ---
@@ -63,7 +63,7 @@ import numpy as np
 # 1. Generate concentric circular clusters
 X, _ = make_circles(n_samples=600, factor=0.4, noise=0.05, random_state=42)
 
-# 2. Apply K-Means (Fails because clusters are not linearly separable Voronoi cells)
+# 2. Apply K-Means (Fails because concentric rings cannot be separated by K-Means' linear Voronoi boundaries)
 kmeans = KMeans(n_clusters=2, n_init=10, random_state=42)
 labels_kmeans = kmeans.fit_predict(X)
 
@@ -84,11 +84,11 @@ print(f"DBSCAN Found Clusters: {n_clusters_db} | Noise Outlier Points: {n_noise_
 ## Key Points & Pitfalls
 
 ### 1. K-Means Sensitivity to Initialization
-Random centroid initialization frequently gets trapped in poor local minima. Always use **K-Means++** (`init='k-means++'`),
+Random centroid initialization frequently gets trapped in poor local minima. Use **K-Means++** (`init='k-means++'`, the Scikit-Learn default),
 which seeds initial centroids probabilistically proportional to squared distance from existing centers.
 
 ### 2. Curse of Dimensionality in Clustering
-In high-dimensional spaces ($D > 50$), distance metrics concentrate and density vanishes. Run PCA or UMAP to reduce dimensions
+In high-dimensional spaces, distance metrics concentrate and density vanishes. Run PCA or UMAP to reduce dimensions
 before running K-Means or DBSCAN.
 
 ### 3. Choosing the Number of Clusters ($K$)

@@ -53,7 +53,7 @@ dense vector representations, semantic vector retrieval, and autoregressive gene
 **Answer**: Classical word-level tokenization assigns unique IDs to whole words. Any word unseen during training is
 mapped to an uninformative `<UNK>` token. BPE (Sennrich et al., 2016) starts with a base vocabulary of individual characters
 and iteratively merges the most frequent adjacent symbol pairs in the corpus. Rare words are decomposed into familiar
-subword chunks (e.g. "unpredictable" $\to$ ["un", "predict", "able"]). In Byte-level BPE (used in GPT-2/3/4 and Llama),
+subword chunks (e.g. "unpredictable" $\to$ ["un", "predict", "able"]). In Byte-level BPE (used in GPT-2/3/4 and Llama 3),
 the base vocabulary consists of the 256 raw bytes of UTF-8, guaranteeing that **no text string ever encounters an OOV token**.
 
 ### Q2: What is the difference between Top-K sampling and Top-P (Nucleus) sampling in LLM text generation?
@@ -74,7 +74,7 @@ tokens in GPU memory, allowing generation of token $N+1$ to execute in $O(N)$ ti
 **Answer**: Full parameter fine-tuning updates all weights $W_0 \in \mathbb{R}^{d \times k}$, requiring storing optimizer moments for every parameter
 (costing $16+$ bytes per parameter in AdamW). LoRA (Hu et al., 2021) freezes $W_0$ and parameterizes the weight update matrix $\Delta W$
 as the low-rank product of two small matrices: $\Delta W = B \cdot A$, where $A \in \mathbb{R}^{r \times k}$, $B \in \mathbb{R}^{d \times r}$,
-and rank $r \ll \min(d, k)$ (e.g. $r = 8$ or $16$). This reduces trainable parameters by **99%**, slashing GPU VRAM requirements.
+and rank $r \ll \min(d, k)$ (e.g. $r = 8$ or $16$). This typically reduces trainable parameters by well over **99%**, slashing GPU VRAM requirements.
 
 ### Q5: What is the difference between Bi-Encoders and Cross-Encoders in semantic search?
 **Answer**:
@@ -82,8 +82,8 @@ and rank $r \ll \min(d, k)$ (e.g. $r = 8$ or $16$). This reduces trainable param
   Similarity is computed via dot product or cosine distance. Millions of document vectors can be precomputed and indexed in vector databases
   for sub-millisecond approximate nearest neighbor search (MIPS / HNSW).
 - **Cross-Encoder**: Passes query and document concatenated together (`[CLS] query [SEP] doc [SEP]`) through all Transformer attention layers.
-  Cross-attention directly compares every query token with every document token, delivering significantly higher ranking accuracy
-  at the cost of orders of magnitude higher computational latency. Standard pattern: Bi-encoder retrieves top 100 candidates; Cross-encoder re-ranks top 10.
+  Full self-attention over the concatenated pair directly compares every query token with every document token, delivering significantly higher ranking accuracy
+  at the cost of orders of magnitude higher computational latency. Standard pattern: the Bi-encoder retrieves the top 100 candidates; the Cross-encoder re-ranks those 100 and returns the best 10.
 
 ---
 

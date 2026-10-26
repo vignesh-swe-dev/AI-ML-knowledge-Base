@@ -38,13 +38,13 @@ controlled by three continuous gating vectors bounded in $(0, 1)$ via Sigmoid ac
 ```
 
 Equations at step $t$:
-1. **Forget Gate $\mathbf{f}_t$**: Decides what fraction of long-term memory to discard:
+1. **Forget Gate $\mathbf{f}_t$**: Decides what fraction of long-term memory to retain (values near 0 discard it, values near 1 keep it):
    $$\mathbf{f}_t = \sigma(W_f [\mathbf{h}_{t-1}, \mathbf{x}_t] + \mathbf{b}_f)$$
 2. **Input Gate $\mathbf{i}_t$**: Decides which new candidate values to store:
    $$\mathbf{i}_t = \sigma(W_i [\mathbf{h}_{t-1}, \mathbf{x}_t] + \mathbf{b}_i)$$
 3. **Candidate Memory Cell $\tilde{\mathbf{C}}_t$**:
    $$\tilde{\mathbf{C}}_t = \tanh(W_c [\mathbf{h}_{t-1}, \mathbf{x}_t] + \mathbf{b}_c)$$
-4. **Cell State Update $\mathbf{C}_t$** (Linear update prevents vanishing gradients):
+4. **Cell State Update $\mathbf{C}_t$** (The additive update helps mitigate vanishing gradients):
    $$\mathbf{C}_t = \mathbf{f}_t \odot \mathbf{C}_{t-1} + \mathbf{i}_t \odot \tilde{\mathbf{C}}_t$$
 5. **Output Gate $\mathbf{o}_t$ and Hidden State $\mathbf{h}_t$**:
    $$\mathbf{o}_t = \sigma(W_o [\mathbf{h}_{t-1}, \mathbf{x}_t] + \mathbf{b}_o)$$

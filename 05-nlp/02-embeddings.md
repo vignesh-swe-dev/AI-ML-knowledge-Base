@@ -6,8 +6,8 @@ dense vector space $\mathbb{R}^D$ where geometric proximity (distance and angle)
 
 This foundation rests on the **Distributional Hypothesis** formulated by linguist J.R. Firth in 1957:
 *"You shall know a word by the company it keeps."* Words that occur in similar linguistic contexts have similar meanings.
-While classical sparse representations (TF-IDF) represent documents as orthogonal, multi-thousand dimensional vectors,
-dense embeddings (Word2Vec, Sentence-BERT) compress semantic meaning into low-dimensional dense vectors ($D \in [384, 1536]$),
+While classical sparse representations (TF-IDF) represent documents as high-dimensional vectors (one axis per vocabulary word, mostly zeros),
+dense embeddings (Word2Vec, Sentence-BERT) compress semantic meaning into low-dimensional dense vectors (typically $D \in [300, 1536]$),
 powering modern vector databases, semantic search engines, and Retrieval-Augmented Generation (RAG) architectures.
 
 ---
@@ -20,7 +20,7 @@ $$\text{TF-IDF}(t, d, D) = \text{TF}(t, d) \times \text{IDF}(t, D)$$
 
 Where:
 - $\text{TF}(t, d) = \frac{f_{t, d}}{\sum_{t' \in d} f_{t', d}}$ (Frequency of term in document).
-- $\text{IDF}(t, D) = \ln\left( \frac{1 + N}{1 + |\{d \in D : t \in d\}|} \right) + 1$ (Penalizes ubiquitous words like "the", "is").
+- $\text{IDF}(t, D) = \ln\left( \frac{1 + N}{1 + |\{d \in D : t \in d\}|} \right) + 1$ (Scikit-Learn's smoothed variant; penalizes ubiquitous words like "the", "is").
 
 ### 2. Word2Vec: Skip-Gram with Negative Sampling (SGNS)
 Given center word $w_c$, predict context word $w_o$ within a sliding window of radius $R$.
@@ -32,7 +32,7 @@ $$\mathcal{L}_{\text{SGNS}} = \log \sigma(\mathbf{v}_{w_o}'^T \mathbf{v}_{w_c}) 
 Where $K$ noise words $w_n$ are sampled according to the unigram distribution raised to the $3/4$ power.
 
 ### 3. Sentence Transformers & The Bi-Encoder Architecture
-Standard BERT computes cross-attention over concatenated pairs, requiring $O(N^2)$ forward passes to find the nearest document.
+Standard BERT feeds each concatenated sentence pair through the network, so finding the most similar pair among $N$ sentences requires $O(N^2)$ forward passes.
 **Sentence-BERT (SBERT; Reimers & Gurevych, 2019)** uses Siamese networks with Mean Pooling to produce fixed sentence embeddings $\mathbf{u}, \mathbf{v}$:
 $$\text{Similarity}(\mathbf{u}, \mathbf{v}) = \cos(\mathbf{u}, \mathbf{v}) = \frac{\mathbf{u}^T \mathbf{v}}{\|\mathbf{u}\|_2 \|\mathbf{v}\|_2}$$
 
@@ -42,13 +42,13 @@ $$\text{Similarity}(\mathbf{u}, \mathbf{v}) = \cos(\mathbf{u}, \mathbf{v}) = \fr
 
 - **TF-IDF & BM25**: Best for exact keyword search (acronyms, model part numbers, legal clause identifiers).
 - **Dense Sentence Embeddings (SBERT / OpenAI text-embedding-3)**: Best for semantic search, concept matching, and RAG retrieval.
-- **Hybrid Search (Sparse BM25 + Dense Vectors)**: The production gold standard for enterprise information retrieval systems.
+- **Hybrid Search (Sparse BM25 + Dense Vectors)**: A widely used best practice for production information retrieval systems.
 
 ---
 
 ## Example
 
-Below is a complete implementation of a Vector Semantic Search engine using pure NumPy and Scikit-Learn TF-IDF:
+Below is a complete implementation of a TF-IDF vector-space search engine (sparse retrieval) using NumPy and Scikit-Learn. Swapping in dense sentence embeddings turns it into a true semantic search engine:
 
 ```python
 import numpy as np
@@ -106,14 +106,12 @@ Always normalize embedding vectors to unit length ($\mathbf{u} = \frac{\mathbf{u
 When vectors have unit length, the Cosine Similarity simplifies to the simple dot product ($\mathbf{u}^T \mathbf{v}$),
 allowing vector databases (FAISS, Milvus) to compute millions of similarity scores via hardware-accelerated BLAS matrix multiplication.
 
-### 2. The Semantic Blindspot of Dense Retrieval
+### 2. The Semantic Blind Spot of Dense Retrieval
 Dense embeddings struggle with specific keyword searches (e.g. "Error Code 0x80070057").
 Combining dense retrieval with sparse BM25 keyword matching via Reciprocal Rank Fusion (RRF) avoids retrieval failures.
 
 ### 3. Mean Pooling vs [CLS] Token
-For sentence embeddings with BERT-like models, Mean Pooling across all token output vectors significantly outperforms
+For sentence embeddings with BERT-like models, Mean Pooling across all token output vectors generally outperforms
 using the raw `[CLS]` token representation.
 
 ---
-
-#

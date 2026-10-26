@@ -136,7 +136,7 @@ Minimal, reproducible, self-contained Python / library snippet.
 - [x] Advanced Tabular House Price Regression
 - [x] Real-Time Spam & Phishing Detection API
 - [x] Customer Segmentation & Lifetime Value Engine
-- [x] Handwritten Digit & Document Recognition
+- [x] Handwritten Digit & Mathematical Formula Recognition
 - [x] Aspect-Based E-Commerce Sentiment Analysis
 - [x] Enterprise Knowledge Retrieval-Augmented Generation (RAG) System
 
@@ -160,7 +160,7 @@ The [`06-projects/`](06-projects/) module features complete roadmaps for end-to-
 ## ⚡ Cheat Sheets & Quick References
 
 - 📊 **[NumPy & Pandas](cheat-sheets/numpy-pandas.md)**: Array indexing, DataFrame slicing, aggregations, and joins.
-- 🤖 **[Scikit-Learn](cheat-sheets/sklearn.md)**: Estimator API, Pipeline construction, grid search, and preprocessing.
+- 🤖 **[Scikit-Learn](cheat-sheets/sklearn.md)**: Estimator API, Pipeline construction, hyperparameter search, and preprocessing.
 - 🎯 **[ML Metrics](cheat-sheets/ml-metrics.md)**: Confusion matrix, Precision vs Recall, ROC-AUC, RMSE, MAE.
 - 🐙 **[Git & GitHub](cheat-sheets/git-github.md)**: Branching models, rebasing, stash management, and commit conventions.
 
